@@ -11,14 +11,14 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class SleepAdvice {
-
-  /**
-   * Текст совета по сну.
-   */
-  private String advice;
-
-  /**
-   * Рекомендуемое количество часов сна.
-   */
-  private int recommendedHours;
+    
+    /**
+     * Текст совета по сну.
+     */
+    private String advice;
+    
+    /**
+     * Рекомендуемое количество часов сна.
+     */
+    private int recommendedHours;
 }

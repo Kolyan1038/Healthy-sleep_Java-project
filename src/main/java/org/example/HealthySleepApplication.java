@@ -8,13 +8,13 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  */
 @SpringBootApplication
 public class HealthySleepApplication {
-  
-  /**
-   * Точка входа в Spring Boot приложение.
-   *
-   * @param args аргументы командной строки
-   */
-  public static void main(String[] args) {
-    SpringApplication.run(HealthySleepApplication.class, args);
-  }
+    
+    /**
+     * Точка входа в Spring Boot приложение.
+     *
+     * @param args аргументы командной строки
+     */
+    public static void main(String[] args) {
+        SpringApplication.run(HealthySleepApplication.class, args);
+    }
 }
