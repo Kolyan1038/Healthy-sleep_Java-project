@@ -13,7 +13,17 @@ public class SleepRepository {
     private final List<SleepAdvice> adviceList = List.of(
             new SleepAdvice("Ложитесь спать до 23:00", 8),
             new SleepAdvice("Не используйте телефон перед сном", 7),
-            new SleepAdvice("Спите в прохладной комнате", 7)
+            new SleepAdvice("Спите в прохладной комнате", 7),
+            new SleepAdvice("Соблюдайте режим сна", 9),
+            new SleepAdvice("Не употребляйте кофеин за 6 часов до сна", 8),
+            new SleepAdvice("Занимайтесь физической активностью, но не перед сном", 7),
+            new SleepAdvice("Используйте затемненные шторы", 7),
+            new SleepAdvice("Медитируйте перед сном", 6),
+            new SleepAdvice("Не ешьте тяжелую пищу перед сном", 7),
+            new SleepAdvice("Пейте теплый травяной чай", 6),
+            new SleepAdvice("Читайте бумажную книгу вместо телефона", 7),
+            new SleepAdvice("Принимайте теплый душ перед сном", 7),
+            new SleepAdvice("Используйте удобную подушку и матрас", 9)
     );
     
     /**
@@ -48,7 +58,6 @@ public class SleepRepository {
     public List<SleepAdvice> getFilteredAdvices(Integer minHours, Integer maxHours) {
         return adviceList.stream()
                 .filter(advice -> (minHours == null || advice.getRecommendedHours() >= minHours)
-                        && (maxHours == null || advice.getRecommendedHours() <= maxHours))
-                .toList();
+                        && (maxHours == null || advice.getRecommendedHours() <= maxHours)).toList();
     }
 }
