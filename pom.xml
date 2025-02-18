@@ -27,13 +27,13 @@
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
 
-        <!-- Spring Boot Data JPA (если решишь работать с БД) -->
+        <!-- Spring Boot Data JPA -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-jpa</artifactId>
         </dependency>
 
-        <!-- H2 Database (только для тестирования, можно заменить на PostgreSQL или MySQL) -->
+        <!-- H2 Database (только для тестирования) -->
         <dependency>
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
