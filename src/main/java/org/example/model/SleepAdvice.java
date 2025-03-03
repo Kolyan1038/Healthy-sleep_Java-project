@@ -1,24 +1,33 @@
 package org.example.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.persistence.*;
+import lombok.*;
 
-/**
- * Класс, представляющий совет по здоровому сну.
- */
-@Data
-@AllArgsConstructor
+import java.util.HashSet;
+import java.util.Set;
+
+@Entity
+@Table(name = "sleep_advices")
+@Getter
+@Setter
 @NoArgsConstructor
+@AllArgsConstructor
+@EqualsAndHashCode(of = "id")
 public class SleepAdvice {
     
-    /**
-     * Текст совета по сну.
-     */
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    
+    @Column(nullable = false)
     private String advice;
     
-    /**
-     * Рекомендуемое количество часов сна.
-     */
+    @Column(nullable = false)
     private int recommendedHours;
+    
+    @ManyToMany(mappedBy = "sleepAdvices", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JsonIgnore
+    private Set<User> users = new HashSet<>();
 }
