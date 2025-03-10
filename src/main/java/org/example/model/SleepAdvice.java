@@ -39,7 +39,8 @@ public class SleepAdvice {
     private int recommendedHours;
     
     @ManyToMany(mappedBy = "sleepAdvices", cascade = {CascadeType.DETACH, CascadeType.MERGE,
-                                                      CascadeType.PERSIST, CascadeType.REFRESH})
+                                                      CascadeType.PERSIST, CascadeType.REFRESH},
+                                                      fetch = FetchType.LAZY)
     @JsonIgnore
     private Set<User> users = new HashSet<>();
 }
