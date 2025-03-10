@@ -1,46 +1,42 @@
 package org.example.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.ManyToMany;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
-import java.util.HashSet;
-import java.util.Set;
+import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-
 @Entity
-@Table(name = "sleep_advices")
+@Table(name = "sleep_sessions")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(of = "id")
-public class SleepAdvice {
+public class SleepSession {
     
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     
     @Column(nullable = false)
-    private String advice;
+    private LocalDateTime startTime;
     
     @Column(nullable = false)
-    private int recommendedHours;
+    private LocalDateTime endTime;
     
-    @ManyToMany(mappedBy = "sleepAdvices", cascade = {CascadeType.DETACH, CascadeType.MERGE,
-                                                      CascadeType.PERSIST, CascadeType.REFRESH},
-                                                      fetch = FetchType.LAZY)
+    @ManyToOne
+    @JoinColumn(name = "user_id", nullable = false)
     @JsonIgnore
-    private Set<User> users = new HashSet<>();
+    private User user;
 }
