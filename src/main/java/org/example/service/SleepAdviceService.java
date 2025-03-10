@@ -1,12 +1,11 @@
 package org.example.service;
 
-import jakarta.persistence.EntityNotFoundException;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.example.exception.NotFoundException;
 import org.example.model.SleepAdvice;
 import org.example.repository.SleepAdviceRepository;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -20,7 +19,7 @@ public class SleepAdviceService {
     
     public SleepAdvice getAdviceById(Long id) {
         return sleepAdviceRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Совет по сну не найден"));
+                .orElseThrow(() -> new NotFoundException("Совет по сну не найден"));
     }
     
     public SleepAdvice createAdvice(SleepAdvice advice) {
