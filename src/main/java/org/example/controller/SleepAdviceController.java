@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @Tag(name = "Советы", description = "Операции с советами для сна")
@@ -26,8 +27,16 @@ public class SleepAdviceController {
     
     @Operation(summary = "Получить все советы")
     @GetMapping
-    public ResponseEntity<List<SleepAdvice>> getAllAdvices() {
-        return ResponseEntity.ok(sleepAdviceService.getAllAdvices());
+    public ResponseEntity<List<SleepAdvice>> getAllAdvices(
+            @RequestParam(required = false) Integer recommendedHours) {
+        if (recommendedHours != null) {
+            // Если параметр передан, возвращаем отфильтрованные советы
+            return ResponseEntity.ok(sleepAdviceService
+                    .getAdvicesByRecommendedHours(recommendedHours));
+        } else {
+            // Если параметр не передан, возвращаем все советы
+            return ResponseEntity.ok(sleepAdviceService.getAllAdvices());
+        }
     }
     
     @Operation(summary = "Получить совет по {id}")

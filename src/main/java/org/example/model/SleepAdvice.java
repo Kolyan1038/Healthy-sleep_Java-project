@@ -9,6 +9,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToMany;
+import jakarta.persistence.PreRemove;
 import jakarta.persistence.Table;
 import java.util.HashSet;
 import java.util.Set;
@@ -20,14 +21,22 @@ import lombok.Setter;
 
 
 @Entity
-@Table(name = "sleep_advices")
+@Table(name = "advices")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(of = "id")
 public class SleepAdvice {
-    
+
+    @PreRemove
+    private void preRemove() {
+        for (User user : users) {
+            user.getSleepAdvices().remove(this);
+        }
+        users.clear();
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -38,9 +47,7 @@ public class SleepAdvice {
     @Column(nullable = false)
     private int recommendedHours;
     
-    @ManyToMany(mappedBy = "sleepAdvices", cascade = {CascadeType.DETACH, CascadeType.MERGE,
-                                                      CascadeType.PERSIST, CascadeType.REFRESH},
-                                                      fetch = FetchType.LAZY)
+    @ManyToMany(mappedBy = "sleepAdvices", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JsonIgnore
     private Set<User> users = new HashSet<>();
 }

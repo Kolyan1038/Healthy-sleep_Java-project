@@ -32,7 +32,11 @@ public class SleepAdviceService {
         advice.setRecommendedHours(updatedAdvice.getRecommendedHours());
         return sleepAdviceRepository.save(advice);
     }
-    
+
+    public List<SleepAdvice> getAdvicesByRecommendedHours(int recommendedHours) {
+        return sleepAdviceRepository.findByRecommendedHours(recommendedHours);
+    }
+
     public void deleteAdvice(Long id) {
         sleepAdviceRepository.deleteById(id);
     }
