@@ -45,8 +45,8 @@ public class User {
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "advice_id")
     )
-    private Set<SleepAdvice> sleepAdvices = new HashSet<>();
+    private Set<Advice> sleepAdvices = new HashSet<>();
     
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
-    private Set<SleepSession> sleepSessions = new HashSet<>();
+    private Set<Session> sleepSessions = new HashSet<>();
 }

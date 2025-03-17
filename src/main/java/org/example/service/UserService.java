@@ -2,12 +2,13 @@ package org.example.service;
 
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.example.cache.UserCache;
 import org.example.exception.NotFoundException;
-import org.example.model.SleepAdvice;
-import org.example.model.SleepSession;
+import org.example.model.Advice;
+import org.example.model.Session;
 import org.example.model.User;
-import org.example.repository.SleepAdviceRepository;
-import org.example.repository.SleepSessionRepository;
+import org.example.repository.AdviceRepository;
+import org.example.repository.SessionRepository;
 import org.example.repository.UserRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,26 +18,42 @@ import org.springframework.transaction.annotation.Transactional;
 public class UserService {
     
     private final UserRepository userRepository;
-    private final SleepAdviceRepository sleepAdviceRepository;
-    private final SleepSessionRepository sleepSessionRepository;
+    private final AdviceRepository adviceRepository;
+    private final SessionRepository sessionRepository;
+    private final UserCache userCache;
     
     public List<User> getAllUsers() {
-        return userRepository.findAll();
+        List<User> users = userRepository.findAll();
+        for (User user : users) {
+            if (userCache.get(user.getId()) == null) {
+                userCache.put(user.getId(), user);
+            }
+        }
+        return users;
     }
     
     public User getUserById(Long id) {
-        return userRepository.findById(id)
+        User cachedUser = userCache.get(id);
+        if (cachedUser != null) {
+            return cachedUser;
+        }
+        User user = userRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Пользователь не найден"));
+        userCache.put(id, user);
+        return user;
     }
     
     public User createUser(User user) {
         if (userRepository.existsByEmail(user.getEmail())) {
             throw new IllegalArgumentException("Email уже используется");
         }
-        return userRepository.save(user);
+        User savedUser = userRepository.save(user);
+        userCache.put(savedUser.getId(), savedUser);
+        return savedUser;
     }
     
     public void deleteUser(Long id) {
+        userCache.remove(id);
         userRepository.deleteById(id);
     }
     
@@ -48,7 +65,9 @@ public class UserService {
                     updateEmail(existingUser, user);
                     updateSleepAdvices(existingUser, user);
                     updateSleepSessions(existingUser, user);
-                    return userRepository.save(existingUser);
+                    User updatedUser = userRepository.save(existingUser);
+                    userCache.put(id, updatedUser);
+                    return updatedUser;
                 })
                 .orElseThrow(() -> new NotFoundException("Пользователь не найден"));
     }
@@ -72,8 +91,8 @@ public class UserService {
     private void updateSleepAdvices(User existingUser, User newUser) {
         if (newUser.getSleepAdvices() != null && !newUser.getSleepAdvices().isEmpty()) {
             existingUser.getSleepAdvices().clear();
-            for (SleepAdvice advice : newUser.getSleepAdvices()) {
-                SleepAdvice existingAdvice = sleepAdviceRepository.findById(advice.getId())
+            for (Advice advice : newUser.getSleepAdvices()) {
+                Advice existingAdvice = adviceRepository.findById(advice.getId())
                         .orElseThrow(() -> new NotFoundException("Совет по сну не найден"));
                 existingUser.getSleepAdvices().add(existingAdvice);
             }
@@ -83,8 +102,8 @@ public class UserService {
     private void updateSleepSessions(User existingUser, User newUser) {
         if (newUser.getSleepSessions() != null && !newUser.getSleepSessions().isEmpty()) {
             existingUser.getSleepSessions().clear();
-            for (SleepSession session : newUser.getSleepSessions()) {
-                SleepSession existingSession = sleepSessionRepository.findById(session.getId())
+            for (Session session : newUser.getSleepSessions()) {
+                Session existingSession = sessionRepository.findById(session.getId())
                         .orElseThrow(() -> new NotFoundException("Cессия по сну не найдена"));
                 existingUser.getSleepSessions().add(existingSession);
             }

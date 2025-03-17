@@ -4,8 +4,8 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
-import org.example.model.SleepSession;
-import org.example.service.SleepSessionService;
+import org.example.model.Session;
+import org.example.service.SessionService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,39 +19,45 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/sessions")
 @RequiredArgsConstructor
-public class SleepSessionController {
+public class SessionController {
     
-    private final SleepSessionService sleepSessionService;
+    private final SessionService sessionService;
     
     @Operation(summary = "Получить все сессии сна")
     @GetMapping
-    public ResponseEntity<List<SleepSession>> getAllSessions() {
-        return ResponseEntity.ok(sleepSessionService.getAllSessions());
+    public ResponseEntity<List<Session>> getAllSessions() {
+        return ResponseEntity.ok(sessionService.getAllSessions());
     }
     
     @Operation(summary = "Получить сессию по {id}")
     @GetMapping("/{id}")
-    public ResponseEntity<SleepSession> getSessionById(@PathVariable Long id) {
-        return ResponseEntity.ok(sleepSessionService.getSessionById(id));
+    public ResponseEntity<Session> getSessionById(@PathVariable Long id) {
+        return ResponseEntity.ok(sessionService.getSessionById(id));
     }
     
     @Operation(summary = "Создать новую сессию")
     @PostMapping("/{userId}")
-    public ResponseEntity<SleepSession> createSession(@PathVariable Long userId,
-                                                      @RequestBody SleepSession session) {
-        return ResponseEntity.ok(sleepSessionService.createSession(userId, session));
+    public ResponseEntity<Session> createSession(@PathVariable Long userId,
+                                                      @RequestBody Session session) {
+        return ResponseEntity.ok(sessionService.createSession(userId, session));
     }
     
     @Operation(summary = "Удалить сессию")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteSession(@PathVariable Long id) {
-        sleepSessionService.deleteSession(id);
+        sessionService.deleteSession(id);
         return ResponseEntity.noContent().build();
     }
     
-    @Operation(summary = "Получить сессию по {id} пользователя")
+    @Operation(summary = "Получить сессии по {id} пользователя")
     @GetMapping("/user/{userId}")
-    public ResponseEntity<List<SleepSession>> getUserSessions(@PathVariable Long userId) {
-        return ResponseEntity.ok(sleepSessionService.getUserSessions(userId));
+    public ResponseEntity<List<Session>> getUserSessions(@PathVariable Long userId) {
+        return ResponseEntity.ok(sessionService.getUserSessions(userId));
+    }
+    
+    @Operation(summary = "Получить по {id} пользователя сессию c текущего дня и позже")
+    @GetMapping("/today/{userId}")
+    public ResponseEntity<List<Session>> getAllTodaySession(@PathVariable Long userId) {
+        return ResponseEntity.ok(sessionService.findUserSessionsFromToday(userId));
     }
 }
