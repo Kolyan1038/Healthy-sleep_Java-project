@@ -54,4 +54,16 @@ public class UserController {
         userService.deleteUser(id);
         return ResponseEntity.noContent().build();
     }
+
+    @Operation(summary = "Получить всех пользователей без сессий")
+    @GetMapping("/users-without/sessions")
+    public ResponseEntity<List<User>> getUsersWithoutSessions() {
+        return ResponseEntity.ok(userService.getUsersWithoutSessions());
+    }
+
+    @Operation(summary = "Получить всех пользователей без советов")
+    @GetMapping("/users-without/advices")
+    public ResponseEntity<List<User>> getUsersWithoutAdvices() {
+        return ResponseEntity.ok(userService.getUsersWithoutAdvices());
+    }
 }

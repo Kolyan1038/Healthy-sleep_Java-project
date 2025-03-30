@@ -109,4 +109,24 @@ public class UserService {
             }
         }
     }
+
+    public List<User> getUsersWithoutSessions() {
+        List<User> users = userRepository.findUsersWithoutSessions();
+        for (User user : users) {
+            if (userCache.get(user.getId()) == null) {
+                userCache.put(user.getId(), user);
+            }
+        }
+        return users;
+    }
+
+    public List<User> getUsersWithoutAdvices() {
+        List<User> users = userRepository.findUsersWithoutAdvices();
+        for (User user : users) {
+            if (userCache.get(user.getId()) == null) {
+                userCache.put(user.getId(), user);
+            }
+        }
+        return users;
+    }
 }

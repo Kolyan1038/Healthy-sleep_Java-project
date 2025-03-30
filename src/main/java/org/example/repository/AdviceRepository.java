@@ -38,6 +38,7 @@ public interface AdviceRepository extends JpaRepository<Advice, Long> {
             + "GROUP BY sa.id "
             + "ORDER BY COUNT(u) DESC")
     List<Advice> findAllOrderByUserCountDesc();
+
     
     @Query("SELECT sa FROM Advice sa "
             + "WHERE sa.recommendedHours > :hours")

@@ -81,7 +81,7 @@ public class AdviceController {
                 .getAdvicesByRecommendedHoursRange(minHours, maxHours));
     }
     
-    @Operation(summary = "Получить все советы, которые рекомендуют"
+    @Operation(summary = "Получить все советы, которые рекомендуют "
             + "больше указанногоколичества часов сна")
     @GetMapping("/greater-than-hours")
     public ResponseEntity<List<Advice>> getAdvicesByRecommendedHoursGreaterThan(
@@ -90,7 +90,7 @@ public class AdviceController {
                 .getAdvicesByRecommendedHoursGreaterThan(hours));
     }
     
-    @Operation(summary = "Получить все советы, которые рекомендуют"
+    @Operation(summary = "Получить все советы, которые рекомендуют "
             + "меньше указанного количества часов сна")
     @GetMapping("/less-than-hours")
     public ResponseEntity<List<Advice>> getAdvicesByRecommendedHoursLessThan(
@@ -111,7 +111,7 @@ public class AdviceController {
         return ResponseEntity.ok(adviceService.getUnassignedAdvices());
     }
     
-    @Operation(summary = "Получить отсортированные советы"
+    @Operation(summary = "Получить отсортированные советы "
             + "по количеству пользователей (от большего к меньшему)")
     @GetMapping("/ordered-by-user-count")
     public ResponseEntity<List<Advice>> getAllAdvicesOrderedByUserCountDesc() {
