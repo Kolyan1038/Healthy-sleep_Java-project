@@ -11,6 +11,10 @@ import jakarta.persistence.Id;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.PreRemove;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 import java.util.HashSet;
 import java.util.Set;
 import lombok.AllArgsConstructor;
@@ -36,14 +40,18 @@ public class Advice {
         }
         users.clear();
     }
-
+    
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     
+    @NotBlank(message = "Advice text is required")
+    @Size(min = 10, max = 1000, message = "Advice must be between 10 and 1000 characters")
     @Column(nullable = false)
     private String advice;
     
+    @Min(value = 1, message = "Recommended hours must be at least 1")
+    @Max(value = 24, message = "Recommended hours cannot exceed 24")
     @Column(nullable = false)
     private int recommendedHours;
     

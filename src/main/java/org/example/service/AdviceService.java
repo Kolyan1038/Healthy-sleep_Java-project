@@ -3,7 +3,7 @@ package org.example.service;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.example.cache.AdviceCache;
-import org.example.exception.NotFoundException;
+import org.example.exception.ResourceNotFoundException;
 import org.example.model.Advice;
 import org.example.repository.AdviceRepository;
 import org.springframework.stereotype.Service;
@@ -31,7 +31,7 @@ public class AdviceService {
             return cachedAdvice;
         }
         Advice advice = adviceRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException("Совет по сну не найден"));
+                .orElseThrow(() -> new ResourceNotFoundException(" Совет по сну не найден "));
         adviceCache.put(id, advice);
         return advice;
     }

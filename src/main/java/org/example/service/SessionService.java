@@ -3,7 +3,7 @@ package org.example.service;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.example.cache.SessionCache;
-import org.example.exception.NotFoundException;
+import org.example.exception.ResourceNotFoundException;
 import org.example.model.Session;
 import org.example.model.User;
 import org.example.repository.SessionRepository;
@@ -35,14 +35,14 @@ public class SessionService {
             return cachedSession;
         }
         Session session = sessionRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException("Сеанс сна не найден"));
+                .orElseThrow(() -> new ResourceNotFoundException("Сеанс сна не найден"));
         sessionCache.put(id, session);
         return session;
     }
     
     public List<Session> getUserSessions(Long userId) {
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new NotFoundException("Пользователь не найден"));
+                .orElseThrow(() -> new ResourceNotFoundException("Пользователь не найден"));
         
         List<Session> sessions = sessionRepository.findByUser(user);
         
@@ -58,7 +58,7 @@ public class SessionService {
     @Transactional
     public Session createSession(Long userId, Session session) {
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new NotFoundException("Пользователь не найден"));
+                .orElseThrow(() -> new ResourceNotFoundException("Пользователь не найден"));
         
         session.setUser(user);
         
@@ -71,7 +71,7 @@ public class SessionService {
     
     public void deleteSession(Long id) {
         Session session = sessionRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException("Сессия сна не найдена"));
+                .orElseThrow(() -> new ResourceNotFoundException("Сессия сна не найдена"));
         
         sessionCache.remove(id);
         
@@ -80,7 +80,7 @@ public class SessionService {
     
     public List<Session> findUserSessionsFromToday(Long userId) {
         if (!userRepository.existsById(userId)) {
-            throw new NotFoundException("Пользователь не найден!");
+            throw new ResourceNotFoundException("Пользователь не найден!");
         }
         
         List<Session> sessions = sessionRepository.findUserSessionsFromToday(userId);

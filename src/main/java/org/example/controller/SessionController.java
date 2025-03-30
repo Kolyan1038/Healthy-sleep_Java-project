@@ -2,6 +2,7 @@ package org.example.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.example.model.Session;
@@ -38,7 +39,7 @@ public class SessionController {
     @Operation(summary = "Создать новую сессию")
     @PostMapping("/{userId}")
     public ResponseEntity<Session> createSession(@PathVariable Long userId,
-                                                      @RequestBody Session session) {
+                                                     @Valid @RequestBody Session session) {
         return ResponseEntity.ok(sessionService.createSession(userId, session));
     }
     

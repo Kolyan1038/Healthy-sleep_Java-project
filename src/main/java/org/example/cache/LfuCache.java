@@ -5,9 +5,9 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public abstract class LFUCache<T> {
+public abstract class LfuCache<T> {
 
-    private static final Logger logger = Logger.getLogger(LFUCache.class.getName());
+    private static final Logger logger = Logger.getLogger(LfuCache.class.getName());
 
     private final int maxCapacity;
     private final Map<Long, CacheEntry<T>> cache = new HashMap<>();
@@ -22,7 +22,7 @@ public abstract class LFUCache<T> {
         }
     }
 
-    protected LFUCache(int maxCapacity) {
+    protected LfuCache(int maxCapacity) {
         this.maxCapacity = maxCapacity;
         logger.log(Level.INFO, "LFUCache initialized with max capacity: " + maxCapacity);
     }
@@ -43,7 +43,8 @@ public abstract class LFUCache<T> {
             CacheEntry<T> entry = cache.get(id);
             entry.value = value;
             entry.frequency++;
-            logger.log(Level.INFO, "Cache update for key: " + id + ", frequency: " + entry.frequency);
+            logger.log(Level.INFO,
+                    "Cache update for key: " + id + ", frequency: " + entry.frequency);
         } else {
             if (cache.size() >= maxCapacity) {
                 logger.log(Level.INFO, "Cache is full, evicting least frequently used entry");

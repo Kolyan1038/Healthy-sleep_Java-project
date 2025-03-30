@@ -2,6 +2,7 @@ package org.example.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.example.model.Advice;
@@ -47,14 +48,14 @@ public class AdviceController {
     
     @Operation(summary = "Создать новый совет")
     @PostMapping
-    public ResponseEntity<Advice> createAdvice(@RequestBody Advice advice) {
+    public ResponseEntity<Advice> createAdvice(@Valid @RequestBody Advice advice) {
         return ResponseEntity.ok(adviceService.createAdvice(advice));
     }
     
     @Operation(summary = "Обновить существующий совет")
     @PutMapping("/{id}")
     public ResponseEntity<Advice> updateAdvice(@PathVariable Long id,
-                                                    @RequestBody Advice advice) {
+                                                   @Valid @RequestBody Advice advice) {
         return ResponseEntity.ok(adviceService.updateAdvice(id, advice));
     }
     
