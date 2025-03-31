@@ -4,6 +4,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import java.util.List;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.example.model.User;
 import org.example.service.UserService;
@@ -35,6 +36,15 @@ public class UserController {
     @GetMapping("/{id}")
     public ResponseEntity<User> getUserById(@PathVariable Long id) {
         return ResponseEntity.ok(userService.getUserById(id));
+    }
+    
+    @Operation(summary = "Создать несколько пользователей")
+    @PostMapping("/bulk")
+    public ResponseEntity<List<User>> createUser(@RequestBody List<User> users) {
+        List<User> savedUsers = users.stream()
+                .map(userService::createUser)
+                .collect(Collectors.toList());
+        return ResponseEntity.ok(savedUsers);
     }
     
     @Operation(summary = "Создать нового пользователя")

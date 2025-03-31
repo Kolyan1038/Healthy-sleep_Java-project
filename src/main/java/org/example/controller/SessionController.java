@@ -3,6 +3,7 @@ package org.example.controller;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.example.model.Session;
@@ -34,6 +35,19 @@ public class SessionController {
     @GetMapping("/{id}")
     public ResponseEntity<Session> getSessionById(@PathVariable Long id) {
         return ResponseEntity.ok(sessionService.getSessionById(id));
+    }
+    
+    @Operation(summary = "Создать несколько сессий для пользователя")
+    @PostMapping("/{userId}/bulk")
+    public ResponseEntity<List<Session>> createSessionsBulk(
+            @PathVariable Long userId,
+            @Valid @RequestBody List<Session> sessions) {
+        List<Session> createdSessions = new ArrayList<>();
+        for (Session session : sessions) {
+            Session sessionServiceSession = sessionService.createSession(userId, session);
+            createdSessions.add(sessionServiceSession);
+        }
+        return ResponseEntity.ok(createdSessions);
     }
     
     @Operation(summary = "Создать новую сессию")

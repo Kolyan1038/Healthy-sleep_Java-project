@@ -4,6 +4,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import java.util.List;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.example.model.Advice;
 import org.example.service.AdviceService;
@@ -46,6 +47,15 @@ public class AdviceController {
         return ResponseEntity.ok(adviceService.getAdviceById(id));
     }
     
+    @Operation(summary = "Создать несколько советов")
+    @PostMapping("/bulk")
+    public ResponseEntity<List<Advice>> createAdvices(@RequestBody List<Advice> advices) {
+        List<Advice> savedAdvices = advices.stream()
+                .map(adviceService::createAdvice)
+                .collect(Collectors.toList());
+        return ResponseEntity.ok(savedAdvices);
+    }
+    
     @Operation(summary = "Создать новый совет")
     @PostMapping
     public ResponseEntity<Advice> createAdvice(@Valid @RequestBody Advice advice) {
@@ -66,22 +76,6 @@ public class AdviceController {
         return ResponseEntity.noContent().build();
     }
     
-    @Operation(summary = "Получить все советы с подгрузкой связанных пользователей")
-    @GetMapping("/with-users")
-    public ResponseEntity<List<Advice>> getAllAdviceWithUsers() {
-        return ResponseEntity.ok(adviceService.getAllAdviceWithUsers());
-    }
-    
-    @Operation(summary = "Получить все советы, которые рекомендуют больше или меньше"
-            + "указанного количества часов сна")
-    @GetMapping("/by-hours-range")
-    public ResponseEntity<List<Advice>> getAdvicesByRecommendedHoursRange(
-            @RequestParam(required = false) Integer minHours,
-            @RequestParam(required = false) Integer maxHours) {
-        return ResponseEntity.ok(adviceService
-                .getAdvicesByRecommendedHoursRange(minHours, maxHours));
-    }
-    
     @Operation(summary = "Получить все советы, которые рекомендуют "
             + "больше указанногоколичества часов сна")
     @GetMapping("/greater-than-hours")
@@ -98,24 +92,5 @@ public class AdviceController {
             @RequestParam(required = false) Integer hours) {
         return ResponseEntity.ok(adviceService
                 .getAdvicesByRecommendedHoursLessThan(hours));
-    }
-    
-    @Operation(summary = "Получить советы, связанные с конкретным пользователем по {userId}")
-    @GetMapping("/by-user/{userId}")
-    public ResponseEntity<List<Advice>> getAdvicesByUserId(@PathVariable Long userId) {
-        return ResponseEntity.ok(adviceService.getAdvicesByUserId(userId));
-    }
-    
-    @Operation(summary = "Получить советы, не связанные с пользователями")
-    @GetMapping("/unassigned")
-    public ResponseEntity<List<Advice>> getUnassignedAdvices() {
-        return ResponseEntity.ok(adviceService.getUnassignedAdvices());
-    }
-    
-    @Operation(summary = "Получить отсортированные советы "
-            + "по количеству пользователей (от большего к меньшему)")
-    @GetMapping("/ordered-by-user-count")
-    public ResponseEntity<List<Advice>> getAllAdvicesOrderedByUserCountDesc() {
-        return ResponseEntity.ok(adviceService.getAllAdvicesOrderedByUserCountDesc());
     }
 }

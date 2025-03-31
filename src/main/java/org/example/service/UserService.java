@@ -4,6 +4,7 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.example.cache.UserCache;
+import org.example.exception.DuplicateEmailException;
 import org.example.exception.ResourceNotFoundException;
 import org.example.model.Advice;
 import org.example.model.Session;
@@ -40,14 +41,14 @@ public class UserService {
             return cachedUser;
         }
         User user = userRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Пользователь не найден"));
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
         userCache.put(id, user);
         return user;
     }
     
     public User createUser(User user) {
         if (userRepository.existsByEmail(user.getEmail())) {
-            throw new IllegalArgumentException("Email уже используется");
+            throw new DuplicateEmailException("Email is already in use");
         }
         User savedUser = userRepository.save(user);
         userCache.put(savedUser.getId(), savedUser);
@@ -71,7 +72,7 @@ public class UserService {
                     userCache.put(id, updatedUser);
                     return updatedUser;
                 })
-                .orElseThrow(() -> new ResourceNotFoundException("Пользователь не найден"));
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
     }
     
     private void updateUsername(User existingUser, User newUser) {
@@ -84,7 +85,7 @@ public class UserService {
         if (newUser.getEmail() != null && !newUser.getEmail().isBlank()) {
             if (!existingUser.getEmail().equals(newUser.getEmail())
                     && userRepository.existsByEmail(newUser.getEmail())) {
-                throw new IllegalArgumentException("Email уже используется");
+                throw new DuplicateEmailException("Email is already in use");
             }
             existingUser.setEmail(newUser.getEmail());
         }
@@ -94,8 +95,8 @@ public class UserService {
         if (newUser.getSleepAdvices() != null && !newUser.getSleepAdvices().isEmpty()) {
             existingUser.getSleepAdvices().clear();
             for (Advice advice : newUser.getSleepAdvices()) {
-                Advice existingAdvice = adviceRepository.findById(advice.getId())
-                        .orElseThrow(() -> new ResourceNotFoundException("Совет по сну не найден"));
+                Advice existingAdvice = adviceRepository.findById(advice.getId()).orElseThrow(()
+                        -> new ResourceNotFoundException("Sleep advice is not found."));
                 existingUser.getSleepAdvices().add(existingAdvice);
             }
         }
@@ -107,7 +108,7 @@ public class UserService {
             for (Session session : newUser.getSleepSessions()) {
                 Session existingSession = sessionRepository.findById(session.getId())
                         .orElseThrow(() ->
-                                new ResourceNotFoundException("Cессия по сну не найдена"));
+                                new ResourceNotFoundException("Sleep session not found"));
                 existingUser.getSleepSessions().add(existingSession);
             }
         }

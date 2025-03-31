@@ -35,9 +35,7 @@ public class LoggingAspect {
     @AfterThrowing(pointcut = "within(org.example.service..*) || within(org.example.controller..*)",
             throwing = "ex")
     public void logAfterThrowing(JoinPoint joinPoint, Throwable ex) {
-        String methodSignature = joinPoint.getSignature().toShortString();
-        String args = Arrays.toString(joinPoint.getArgs());
-        logger.error("Exception in {} with arguments {}: {}", methodSignature, args,
-                ex.getMessage(), ex);
+        String methodName = joinPoint.getSignature().toShortString();
+        logger.error("Error in the method: {}, exception: {}\n\t", methodName, ex.getMessage(), ex);
     }
 }

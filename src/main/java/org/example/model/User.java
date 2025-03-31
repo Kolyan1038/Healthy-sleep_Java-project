@@ -12,7 +12,6 @@ import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
-import jakarta.validation.Valid;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
@@ -47,7 +46,6 @@ public class User {
     @Column(nullable = false, unique = true)
     private String email;
     
-    @Valid
     @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinTable(
             name = "user_advice",
@@ -56,7 +54,6 @@ public class User {
     )
     private Set<Advice> sleepAdvices = new HashSet<>();
     
-    @Valid
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private Set<Session> sleepSessions = new HashSet<>();
 }

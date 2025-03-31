@@ -23,7 +23,7 @@ public class SessionService {
         List<Session> sessions = sessionRepository.findAll();
         for (Session session : sessions) {
             if (sessionCache.get(session.getId()) == null) {
-                sessionCache.put(session.getId(), session); // Кэшируем каждую сессию
+                sessionCache.put(session.getId(), session);
             }
         }
         return sessions;
@@ -35,14 +35,14 @@ public class SessionService {
             return cachedSession;
         }
         Session session = sessionRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Сеанс сна не найден"));
+                .orElseThrow(() -> new ResourceNotFoundException("Sleep session not found"));
         sessionCache.put(id, session);
         return session;
     }
     
     public List<Session> getUserSessions(Long userId) {
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new ResourceNotFoundException("Пользователь не найден"));
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
         
         List<Session> sessions = sessionRepository.findByUser(user);
         
@@ -58,7 +58,7 @@ public class SessionService {
     @Transactional
     public Session createSession(Long userId, Session session) {
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new ResourceNotFoundException("Пользователь не найден"));
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
         
         session.setUser(user);
         
@@ -71,7 +71,7 @@ public class SessionService {
     
     public void deleteSession(Long id) {
         Session session = sessionRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Сессия сна не найдена"));
+                .orElseThrow(() -> new ResourceNotFoundException("Sleep session not found"));
         
         sessionCache.remove(id);
         
@@ -80,7 +80,7 @@ public class SessionService {
     
     public List<Session> findUserSessionsFromToday(Long userId) {
         if (!userRepository.existsById(userId)) {
-            throw new ResourceNotFoundException("Пользователь не найден!");
+            throw new ResourceNotFoundException("User not found");
         }
         
         List<Session> sessions = sessionRepository.findUserSessionsFromToday(userId);

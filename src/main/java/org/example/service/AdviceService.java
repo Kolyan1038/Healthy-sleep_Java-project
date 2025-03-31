@@ -31,7 +31,7 @@ public class AdviceService {
             return cachedAdvice;
         }
         Advice advice = adviceRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException(" Совет по сну не найден "));
+                .orElseThrow(() -> new ResourceNotFoundException("Sleep advice not found"));
         adviceCache.put(id, advice);
         return advice;
     }
@@ -52,7 +52,7 @@ public class AdviceService {
     }
     
     public List<Advice> getAdvicesByRecommendedHours(int recommendedHours) {
-        List<Advice> advices = adviceRepository.findByRecommendedHours(recommendedHours);
+        List<Advice> advices = adviceRepository.findAllByRecommendedHours(recommendedHours);
         for (Advice advice : advices) {
             if (adviceCache.get(advice.getId()) == null) {
                 adviceCache.put(advice.getId(), advice);
@@ -62,33 +62,14 @@ public class AdviceService {
     }
     
     public void deleteAdvice(Long id) {
+        adviceRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Sleep advice not found"));
         adviceCache.remove(id);
         adviceRepository.deleteById(id);
     }
     
-    public List<Advice> getAllAdviceWithUsers() {
-        List<Advice> advices = adviceRepository.findAllWithUsers();
-        for (Advice advice : advices) {
-            if (adviceCache.get(advice.getId()) == null) {
-                adviceCache.put(advice.getId(), advice);
-            }
-        }
-        return advices;
-    }
-    
-    public List<Advice> getAdvicesByRecommendedHoursRange(int minHours, int maxHours) {
-        List<Advice> advices =
-                adviceRepository.findByRecommendedHoursRange(minHours, maxHours);
-        for (Advice advice : advices) {
-            if (adviceCache.get(advice.getId()) == null) {
-                adviceCache.put(advice.getId(), advice);
-            }
-        }
-        return advices;
-    }
-    
     public List<Advice> getAdvicesByRecommendedHoursGreaterThan(int hours) {
-        List<Advice> advices = adviceRepository.findByRecommendedHoursGreaterThan(hours);
+        List<Advice> advices = adviceRepository.findAllByRecommendedHoursGreaterThan(hours);
         for (Advice advice : advices) {
             if (adviceCache.get(advice.getId()) == null) {
                 adviceCache.put(advice.getId(), advice);
@@ -98,37 +79,7 @@ public class AdviceService {
     }
     
     public List<Advice> getAdvicesByRecommendedHoursLessThan(int hours) {
-        List<Advice> advices = adviceRepository.findByRecommendedHoursLessThan(hours);
-        for (Advice advice : advices) {
-            if (adviceCache.get(advice.getId()) == null) {
-                adviceCache.put(advice.getId(), advice);
-            }
-        }
-        return advices;
-    }
-    
-    public List<Advice> getAdvicesByUserId(Long userId) {
-        List<Advice> advices = adviceRepository.findByUserId(userId);
-        for (Advice advice : advices) {
-            if (adviceCache.get(advice.getId()) == null) {
-                adviceCache.put(advice.getId(), advice);
-            }
-        }
-        return advices;
-    }
-    
-    public List<Advice> getUnassignedAdvices() {
-        List<Advice> advices = adviceRepository.findUnassignedAdvices();
-        for (Advice advice : advices) {
-            if (adviceCache.get(advice.getId()) == null) {
-                adviceCache.put(advice.getId(), advice);
-            }
-        }
-        return advices;
-    }
-    
-    public List<Advice> getAllAdvicesOrderedByUserCountDesc() {
-        List<Advice> advices = adviceRepository.findAllOrderByUserCountDesc();
+        List<Advice> advices = adviceRepository.findAllByRecommendedHoursLessThan(hours);
         for (Advice advice : advices) {
             if (adviceCache.get(advice.getId()) == null) {
                 adviceCache.put(advice.getId(), advice);
