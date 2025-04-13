@@ -5,7 +5,6 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import java.util.List;
 import java.util.stream.Collectors;
-import lombok.RequiredArgsConstructor;
 import org.example.model.Advice;
 import org.example.service.AdviceService;
 import org.springframework.http.ResponseEntity;
@@ -22,10 +21,13 @@ import org.springframework.web.bind.annotation.RestController;
 @Tag(name = "Советы", description = "Операции с советами для сна")
 @RestController
 @RequestMapping("/api/advices")
-@RequiredArgsConstructor
 public class AdviceController {
     
     private final AdviceService adviceService;
+    
+    public AdviceController(AdviceService adviceService) {
+        this.adviceService = adviceService;
+    }
     
     @Operation(summary = "Получить все советы")
     @GetMapping

@@ -1,23 +1,33 @@
 package org.example.service;
 
 import java.util.List;
-import lombok.RequiredArgsConstructor;
 import org.example.cache.SessionCache;
 import org.example.exception.ResourceNotFoundException;
 import org.example.model.Session;
 import org.example.model.User;
 import org.example.repository.SessionRepository;
 import org.example.repository.UserRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-@RequiredArgsConstructor
 public class SessionService {
     
     private final SessionRepository sessionRepository;
     private final UserRepository userRepository;
     private final SessionCache sessionCache;
+    
+    @Autowired // Необязательно, если есть только один конструктор
+    public SessionService(
+            SessionRepository sessionRepository,
+            UserRepository userRepository,
+            SessionCache sessionCache
+    ) {
+        this.sessionRepository = sessionRepository;
+        this.userRepository = userRepository;
+        this.sessionCache = sessionCache;
+    }
     
     public List<Session> getAllSessions() {
         List<Session> sessions = sessionRepository.findAll();
@@ -70,11 +80,7 @@ public class SessionService {
     }
     
     public void deleteSession(Long id) {
-        Session session = sessionRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Sleep session not found"));
-        
         sessionCache.remove(id);
-        
         sessionRepository.deleteById(id);
     }
     

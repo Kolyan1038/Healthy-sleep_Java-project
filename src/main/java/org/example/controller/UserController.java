@@ -5,7 +5,6 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import java.util.List;
 import java.util.stream.Collectors;
-import lombok.RequiredArgsConstructor;
 import org.example.model.User;
 import org.example.service.UserService;
 import org.springframework.http.ResponseEntity;
@@ -21,10 +20,13 @@ import org.springframework.web.bind.annotation.RestController;
 @Tag(name = "Пользователи", description = "Операции с пользователями")
 @RestController
 @RequestMapping("/api/users")
-@RequiredArgsConstructor
 public class UserController {
     
     private final UserService userService;
+    
+    public UserController(UserService userService) {
+        this.userService = userService;
+    }
     
     @Operation(summary = "Получить всех пользователей")
     @GetMapping

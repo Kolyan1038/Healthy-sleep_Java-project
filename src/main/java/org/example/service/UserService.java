@@ -1,7 +1,6 @@
 package org.example.service;
 
 import java.util.List;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.example.cache.UserCache;
 import org.example.exception.DuplicateEmailException;
@@ -17,13 +16,20 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Slf4j
 @Service
-@RequiredArgsConstructor
 public class UserService {
     
     private final UserRepository userRepository;
     private final AdviceRepository adviceRepository;
     private final SessionRepository sessionRepository;
     private final UserCache userCache;
+    
+    public UserService(UserRepository userRepository, AdviceRepository adviceRepository,
+                       SessionRepository sessionRepository, UserCache userCache) {
+        this.userRepository = userRepository;
+        this.adviceRepository = adviceRepository;
+        this.sessionRepository = sessionRepository;
+        this.userCache = userCache;
+    }
     
     public List<User> getAllUsers() {
         List<User> users = userRepository.findAll();
@@ -75,13 +81,13 @@ public class UserService {
                 .orElseThrow(() -> new ResourceNotFoundException("User not found"));
     }
     
-    private void updateUsername(User existingUser, User newUser) {
+    public void updateUsername(User existingUser, User newUser) {
         if (newUser.getUsername() != null && !newUser.getUsername().isBlank()) {
             existingUser.setUsername(newUser.getUsername());
         }
     }
     
-    private void updateEmail(User existingUser, User newUser) {
+    public void updateEmail(User existingUser, User newUser) {
         if (newUser.getEmail() != null && !newUser.getEmail().isBlank()) {
             if (!existingUser.getEmail().equals(newUser.getEmail())
                     && userRepository.existsByEmail(newUser.getEmail())) {
@@ -91,7 +97,7 @@ public class UserService {
         }
     }
     
-    private void updateSleepAdvices(User existingUser, User newUser) {
+    public void updateSleepAdvices(User existingUser, User newUser) {
         if (newUser.getSleepAdvices() != null && !newUser.getSleepAdvices().isEmpty()) {
             existingUser.getSleepAdvices().clear();
             for (Advice advice : newUser.getSleepAdvices()) {
@@ -102,7 +108,7 @@ public class UserService {
         }
     }
     
-    private void updateSleepSessions(User existingUser, User newUser) {
+    public void updateSleepSessions(User existingUser, User newUser) {
         if (newUser.getSleepSessions() != null && !newUser.getSleepSessions().isEmpty()) {
             existingUser.getSleepSessions().clear();
             for (Session session : newUser.getSleepSessions()) {
