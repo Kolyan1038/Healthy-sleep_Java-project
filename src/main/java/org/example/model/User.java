@@ -56,4 +56,52 @@ public class User {
     
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private Set<Session> sleepSessions = new HashSet<>();
+    
+    public User(Long id, String username, String mail) {
+        this.id = id;
+        this.username = username;
+        this.email = mail;
+    }
+
+    //Getter
+    public Long getId() {
+        return id;
+    }
+    
+    public String getEmail() {
+        return email;
+    }
+    
+    public String getUsername() {
+        return username;
+    }
+    
+    public Set<Advice> getSleepAdvices() {
+        return sleepAdvices;
+    }
+    
+    public Set<Session> getSleepSessions() {
+        return sleepSessions;
+    }
+    // Setter
+    
+    public void setId(Long id) {
+        this.id = id;
+    }
+    
+    public void setUsername(String username) {
+        this.username = username;
+    }
+    
+    public void setEmail(String email) {
+        this.email = email;
+    }
+    
+    public void setSleepAdvices(Set<Advice> sleepAdvices) {
+        this.sleepAdvices = sleepAdvices;
+    }
+    
+    public void setSleepSessions(Set<Session> sleepSessions) {
+        this.sleepSessions = sleepSessions;
+    }
 }

@@ -1,7 +1,6 @@
 package org.example.service;
 
 import java.util.List;
-import lombok.RequiredArgsConstructor;
 import org.example.cache.AdviceCache;
 import org.example.exception.ResourceNotFoundException;
 import org.example.model.Advice;
@@ -9,11 +8,15 @@ import org.example.repository.AdviceRepository;
 import org.springframework.stereotype.Service;
 
 @Service
-@RequiredArgsConstructor
 public class AdviceService {
     
     private final AdviceRepository adviceRepository;
     private final AdviceCache adviceCache;
+    
+    public AdviceService(AdviceRepository adviceRepository, AdviceCache adviceCache) {
+        this.adviceRepository = adviceRepository;
+        this.adviceCache = adviceCache;
+    }
     
     public List<Advice> getAllAdvices() {
         List<Advice> advices = adviceRepository.findAll();
@@ -62,8 +65,6 @@ public class AdviceService {
     }
     
     public void deleteAdvice(Long id) {
-        adviceRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Sleep advice not found"));
         adviceCache.remove(id);
         adviceRepository.deleteById(id);
     }

@@ -33,14 +33,6 @@ import lombok.Setter;
 @EqualsAndHashCode(of = "id")
 public class Advice {
 
-    @PreRemove
-    private void preRemove() {
-        for (User user : users) {
-            user.getSleepAdvices().remove(this);
-        }
-        users.clear();
-    }
-    
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -58,4 +50,52 @@ public class Advice {
     @ManyToMany(mappedBy = "sleepAdvices", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JsonIgnore
     private Set<User> users = new HashSet<>();
+    
+    public Advice(long id, String advice, int recHours) {
+        this.id = id;
+        this.advice = advice;
+        this.recommendedHours = recHours;
+    }
+    
+    @PreRemove
+    private void preRemove() {
+        for (User user : users) {
+            user.getSleepAdvices().remove(this);
+        }
+        users.clear();
+    }
+    
+    // Getter
+    public Long getId() {
+        return id;
+    }
+    
+    public String getAdvice() {
+        return advice;
+    }
+    
+    public int getRecommendedHours() {
+        return recommendedHours;
+    }
+    
+    public Set<User> getUsers() {
+        return users;
+    }
+    
+    // Setter
+    public void setId(Long id) {
+        this.id = id;
+    }
+    
+    public void setAdvice(String advice) {
+        this.advice = advice;
+    }
+    
+    public void setRecommendedHours(int recommendedHours) {
+        this.recommendedHours = recommendedHours;
+    }
+    
+    public void setUsers(Set<User> users) {
+        this.users = users;
+    }
 }

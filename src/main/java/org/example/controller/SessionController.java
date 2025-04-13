@@ -5,7 +5,6 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
-import lombok.RequiredArgsConstructor;
 import org.example.model.Session;
 import org.example.service.SessionService;
 import org.springframework.http.ResponseEntity;
@@ -20,10 +19,13 @@ import org.springframework.web.bind.annotation.RestController;
 @Tag(name = "Сессии сна", description = "Операции с сессиями сна")
 @RestController
 @RequestMapping("/api/sessions")
-@RequiredArgsConstructor
 public class SessionController {
     
     private final SessionService sessionService;
+    
+    public SessionController(SessionService sessionService) {
+        this.sessionService = sessionService;
+    }
     
     @Operation(summary = "Получить все сессии сна")
     @GetMapping

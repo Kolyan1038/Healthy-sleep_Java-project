@@ -42,9 +42,47 @@ public class Session {
     @Column(nullable = false)
     private LocalDateTime endTime;
     
-
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
     @JsonIgnore
     private User user;
+    
+    public Session(long id, User user) {
+        this.id = id;
+        this.user = user;
+    }
+    
+    //Getter
+    public Long getId() {
+        return id;
+    }
+    
+    public User getUser() {
+        return user;
+    }
+    
+    public LocalDateTime getStartTime() {
+        return startTime;
+    }
+    
+    public LocalDateTime getEndTime() {
+        return endTime;
+    }
+    
+    //Setter
+    public void setId(Long id) {
+        this.id = id;
+    }
+    
+    public void setUser(User user) {
+        this.user = user;
+    }
+    
+    public void setStartTime(LocalDateTime startTime) {
+        this.startTime = startTime;
+    }
+    
+    public void setEndTime(LocalDateTime endTime) {
+        this.endTime = endTime;
+    }
 }
