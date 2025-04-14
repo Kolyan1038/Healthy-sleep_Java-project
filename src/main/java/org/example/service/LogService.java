@@ -1,6 +1,7 @@
 package org.example.service;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -11,6 +12,10 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ConcurrentHashMap;
 import org.example.exception.InvalidInputException;
 import org.example.exception.LoggingException;
 import org.example.exception.ResourceNotFoundException;
@@ -18,16 +23,52 @@ import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 
+
 @Service
 public class LogService {
     
     private static final String LOGS_DIR = "logs";
-    private static final DateTimeFormatter INPUT_DATE_FORMATTER
-            = DateTimeFormatter.ofPattern("dd.MM.yyyy");
-    private static final DateTimeFormatter LOG_DATE_FORMATTER
-            = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+    private static final DateTimeFormatter INPUT_DATE_FORMATTER =
+            DateTimeFormatter.ofPattern("dd.MM.yyyy");
+    private static final DateTimeFormatter LOG_DATE_FORMATTER =
+            DateTimeFormatter.ofPattern("yyyy-MM-dd");
     
-    public Resource getLogFileForDate(String date) {
+    private final Map<UUID, CompletableFuture<File>> taskMap = new ConcurrentHashMap<>();
+    
+    public UUID generateLogAsync(String date) {
+        UUID id = UUID.randomUUID();
+        taskMap.put(id, CompletableFuture.supplyAsync(() -> {
+            try {
+                return createLogFileForDate(date, id);
+            } catch (IOException e) {
+                throw new LoggingException("Error generating log file");
+            }
+        }));
+        return id;
+    }
+    
+    public String getTaskStatus(UUID id) {
+        CompletableFuture<File> future = taskMap.get(id);
+        if (future == null) {
+            return "NOT_FOUND";
+        }
+        return future.isDone() ? "COMPLETED" : "IN_PROGRESS";
+    }
+    
+    public Resource getGeneratedFile(UUID id) {
+        CompletableFuture<File> future = taskMap.get(id);
+        if (future == null || !future.isDone()) {
+            throw new ResourceNotFoundException("Log file not ready or does not exist");
+        }
+        try {
+            byte[] content = Files.readAllBytes(future.get().toPath());
+            return new ByteArrayResource(content);
+        } catch (Exception e) {
+            throw new LoggingException("Error reading generated file");
+        }
+    }
+    
+    private File createLogFileForDate(String date, UUID id) throws IOException {
         LocalDate parsedDate = parseDate(date);
         String formattedDate = parsedDate.format(LOG_DATE_FORMATTER);
         
@@ -44,22 +85,18 @@ public class LogService {
                     filteredLines.add(line);
                 }
             }
-        } catch (IOException ex) {
-            throw new LoggingException("Error reading log file");
         }
         
         if (filteredLines.isEmpty()) {
             throw new ResourceNotFoundException("No logs found for this date.");
         }
         
-        String fileContent = String.join(System.lineSeparator(), filteredLines);
-        return new ByteArrayResource(fileContent.getBytes(StandardCharsets.UTF_8));
-    }
-    
-    
-    public String getDownloadFileName(String date) {
-        LocalDate parsedDate = parseDate(date);
-        return String.format("app-%s.log", parsedDate.format(LOG_DATE_FORMATTER));
+        Path outputDir = Paths.get(LOGS_DIR, "generated");
+        Files.createDirectories(outputDir);
+        File outputFile = outputDir.resolve("log-" + id + ".log").toFile();
+        Files.write(outputFile.toPath(), filteredLines, StandardCharsets.UTF_8);
+        
+        return outputFile;
     }
     
     private LocalDate parseDate(String date) {
