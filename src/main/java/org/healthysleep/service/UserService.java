@@ -139,4 +139,37 @@ public class UserService {
         }
         return users;
     }
+    
+    public User addAdvicesToUser(Long userId, List<Long> adviceIds) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() ->
+                        new ResourceNotFoundException("User not found with id: " + userId));
+        
+        List<Advice> advices = adviceRepository.findAllById(adviceIds);
+        
+        if (advices.size() != adviceIds.size()) {
+            throw new ResourceNotFoundException("Some advices not found");
+        }
+        
+        user.getSleepAdvices().addAll(advices);
+        return userRepository.save(user);
+    }
+    
+    @Transactional
+    public void removeAdviceFromUser(Long userId, Long adviceId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() ->
+                        new ResourceNotFoundException("User not found with id: " + userId));
+        
+        Advice advice = adviceRepository.findById(adviceId)
+                .orElseThrow(() ->
+                        new ResourceNotFoundException("Advice not found with id: " + adviceId));
+        
+        if (!user.getSleepAdvices().contains(advice)) {
+            throw new IllegalArgumentException("User does not have this advice");
+        }
+        
+        user.getSleepAdvices().remove(advice);
+        userRepository.save(user);
+    }
 }

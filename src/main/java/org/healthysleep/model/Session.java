@@ -9,8 +9,6 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
-import jakarta.validation.constraints.Future;
-import jakarta.validation.constraints.FutureOrPresent;
 import jakarta.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
@@ -33,12 +31,10 @@ public class Session {
     private Long id;
     
     @NotNull(message = "Start time is required")
-    @FutureOrPresent(message = "Start time must be in the present or future")
     @Column(nullable = false)
     private LocalDateTime startTime;
     
     @NotNull(message = "End time is required")
-    @Future(message = "End time must be in the future")
     @Column(nullable = false)
     private LocalDateTime endTime;
     

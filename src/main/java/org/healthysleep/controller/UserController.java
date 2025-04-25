@@ -55,6 +55,15 @@ public class UserController {
         return ResponseEntity.ok(userService.createUser(user));
     }
     
+    @Operation(summary = "Добавить советы пользователю")
+    @PostMapping("/{userId}/advices")
+    public ResponseEntity<User> addAdvicesToUser(
+            @PathVariable Long userId,
+            @RequestBody List<Long> adviceIds) {
+        User user = userService.addAdvicesToUser(userId, adviceIds);
+        return ResponseEntity.ok(user);
+    }
+    
     @Operation(summary = "Обновить данные пользователя")
     @PutMapping("/{id}")
     public ResponseEntity<User> updateUser(@PathVariable Long id, @Valid @RequestBody User user) {
@@ -65,6 +74,15 @@ public class UserController {
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
         userService.deleteUser(id);
+        return ResponseEntity.noContent().build();
+    }
+    
+    @Operation(summary = "Удалить совет у пользователя")
+    @DeleteMapping("/{userId}/advices/{adviceId}")
+    public ResponseEntity<Void> removeAdviceFromUser(
+            @PathVariable Long userId,
+            @PathVariable Long adviceId) {
+        userService.removeAdviceFromUser(userId, adviceId);
         return ResponseEntity.noContent().build();
     }
 
