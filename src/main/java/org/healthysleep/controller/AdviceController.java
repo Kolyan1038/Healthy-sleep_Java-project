@@ -95,4 +95,10 @@ public class AdviceController {
         return ResponseEntity.ok(adviceService
                 .getAdvicesByRecommendedHoursLessThan(hours));
     }
+    
+    @Operation(summary = "Получить количество пользователей, добавивших совет")
+    @GetMapping("/{id}/user-count")
+    public ResponseEntity<Integer> getAdviceUserCount(@PathVariable Long id) {
+        return ResponseEntity.ok(adviceService.getAdviceUserCount(id));
+    }
 }

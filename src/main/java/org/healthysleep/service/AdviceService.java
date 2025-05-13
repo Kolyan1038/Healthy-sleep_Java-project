@@ -34,7 +34,7 @@ public class AdviceService {
             return cachedAdvice;
         }
         Advice advice = adviceRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Sleep advice not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Advice not found"));
         adviceCache.put(id, advice);
         return advice;
     }
@@ -88,5 +88,10 @@ public class AdviceService {
         }
         return advices;
     }
-
+    
+    public int getAdviceUserCount(Long adviceId) {
+        Advice advice = adviceRepository.findById(adviceId)
+                .orElseThrow(() -> new ResourceNotFoundException("Advice not found"));
+        return advice.getUsers().size();
+    }
 }

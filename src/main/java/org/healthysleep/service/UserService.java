@@ -1,5 +1,6 @@
 package org.healthysleep.service;
 
+
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.healthysleep.cache.UserCache;
@@ -42,10 +43,6 @@ public class UserService {
     }
     
     public User getUserById(Long id) {
-        User cachedUser = userCache.get(id);
-        if (cachedUser != null) {
-            return cachedUser;
-        }
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found"));
         userCache.put(id, user);
@@ -56,6 +53,10 @@ public class UserService {
         if (userRepository.existsByEmail(user.getEmail())) {
             throw new DuplicateEmailException("Email is already in use");
         }
+        if (userRepository.existsByUsername(user.getUsername())) {
+            throw new DuplicateEmailException("Username is already in use");
+        }
+        user.setRole("USER");
         User savedUser = userRepository.save(user);
         userCache.put(savedUser.getId(), savedUser);
         return savedUser;
@@ -72,6 +73,7 @@ public class UserService {
                 .map(existingUser -> {
                     updateUsername(existingUser, user);
                     updateEmail(existingUser, user);
+                    updateRole(existingUser, user);
                     updateSleepAdvices(existingUser, user);
                     updateSleepSessions(existingUser, user);
                     User updatedUser = userRepository.save(existingUser);
@@ -94,6 +96,12 @@ public class UserService {
                 throw new DuplicateEmailException("Email is already in use");
             }
             existingUser.setEmail(newUser.getEmail());
+        }
+    }
+    
+    public void updateRole(User existingUser, User newUser) {
+        if (newUser.getRole() != null && !newUser.getRole().isBlank()) {
+            existingUser.setRole(newUser.getRole());
         }
     }
     
@@ -152,6 +160,7 @@ public class UserService {
         }
         
         user.getSleepAdvices().addAll(advices);
+        userCache.put(userId, user);
         return userRepository.save(user);
     }
     
@@ -168,8 +177,8 @@ public class UserService {
         if (!user.getSleepAdvices().contains(advice)) {
             throw new IllegalArgumentException("User does not have this advice");
         }
-        
         user.getSleepAdvices().remove(advice);
+        userCache.put(userId, user);
         userRepository.save(user);
     }
 }

@@ -4,9 +4,9 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import java.util.List;
-import java.util.stream.Collectors;
 import org.healthysleep.model.User;
 import org.healthysleep.service.UserService;
+import org.hibernate.Hibernate;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -37,22 +37,9 @@ public class UserController {
     @Operation(summary = "Получить пользователя по {id}")
     @GetMapping("/{id}")
     public ResponseEntity<User> getUserById(@PathVariable Long id) {
-        return ResponseEntity.ok(userService.getUserById(id));
-    }
-    
-    @Operation(summary = "Создать несколько пользователей")
-    @PostMapping("/bulk")
-    public ResponseEntity<List<User>> createUser(@RequestBody List<User> users) {
-        List<User> savedUsers = users.stream()
-                .map(userService::createUser)
-                .collect(Collectors.toList());
-        return ResponseEntity.ok(savedUsers);
-    }
-    
-    @Operation(summary = "Создать нового пользователя")
-    @PostMapping
-    public ResponseEntity<User> createUser(@Valid @RequestBody User user) {
-        return ResponseEntity.ok(userService.createUser(user));
+        User user = userService.getUserById(id);
+        Hibernate.initialize(user.getSleepSessions()); // Инициализация коллекции
+        return ResponseEntity.ok(user);
     }
     
     @Operation(summary = "Добавить советы пользователю")

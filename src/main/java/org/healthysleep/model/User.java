@@ -14,6 +14,7 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Size;
 import java.util.HashSet;
 import java.util.Set;
@@ -46,6 +47,14 @@ public class User {
     @Column(nullable = false, unique = true)
     private String email;
     
+    @NotBlank(message = "Email is required")
+    @NotEmpty(message = "Password must not be empty.")
+    @Column(nullable = false, unique = true, length = 1023)
+    private String password;
+    
+    @Column(nullable = false)
+    private String role;
+    
     @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinTable(
             name = "user_advice",
@@ -54,54 +63,6 @@ public class User {
     )
     private Set<Advice> sleepAdvices = new HashSet<>();
     
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "user", cascade = CascadeType.ALL)
     private Set<Session> sleepSessions = new HashSet<>();
-    
-    public User(Long id, String username, String mail) {
-        this.id = id;
-        this.username = username;
-        this.email = mail;
-    }
-
-    //Getter
-    public Long getId() {
-        return id;
-    }
-    
-    public String getEmail() {
-        return email;
-    }
-    
-    public String getUsername() {
-        return username;
-    }
-    
-    public Set<Advice> getSleepAdvices() {
-        return sleepAdvices;
-    }
-    
-    public Set<Session> getSleepSessions() {
-        return sleepSessions;
-    }
-    // Setter
-    
-    public void setId(Long id) {
-        this.id = id;
-    }
-    
-    public void setUsername(String username) {
-        this.username = username;
-    }
-    
-    public void setEmail(String email) {
-        this.email = email;
-    }
-    
-    public void setSleepAdvices(Set<Advice> sleepAdvices) {
-        this.sleepAdvices = sleepAdvices;
-    }
-    
-    public void setSleepSessions(Set<Session> sleepSessions) {
-        this.sleepSessions = sleepSessions;
-    }
 }
